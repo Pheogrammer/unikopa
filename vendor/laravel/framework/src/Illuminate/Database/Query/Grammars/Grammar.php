@@ -19,16 +19,9 @@ class Grammar extends BaseGrammar
     protected $operators = [];
 
     /**
-     * The grammar specific bit operators.
-     *
-     * @var array
-     */
-    protected $bitOperators = [];
-
-    /**
      * The components that make up a select clause.
      *
-     * @var string[]
+     * @var array
      */
     protected $selectComponents = [
         'aggregate',
@@ -52,7 +45,7 @@ class Grammar extends BaseGrammar
      */
     public function compileSelect(Builder $query)
     {
-        if (($query->unions || $query->havings) && $query->aggregate) {
+        if ($query->unions && $query->aggregate) {
             return $this->compileUnionAggregate($query);
         }
 
@@ -188,7 +181,7 @@ class Grammar extends BaseGrammar
      * @param  \Illuminate\Database\Query\Builder  $query
      * @return string
      */
-    public function compileWheres(Builder $query)
+    protected function compileWheres(Builder $query)
     {
         // Each type of where clauses has its own compiler function which is responsible
         // for actually creating the where clauses SQL. This helps keep the code nice
@@ -257,25 +250,7 @@ class Grammar extends BaseGrammar
     {
         $value = $this->parameter($where['value']);
 
-        $operator = str_replace('?', '??', $where['operator']);
-
-        return $this->wrap($where['column']).' '.$operator.' '.$value;
-    }
-
-    /**
-     * Compile a bit operator where clause.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $where
-     * @return string
-     */
-    protected function whereBit(Builder $query, $where)
-    {
-        $value = $this->parameter($where['value']);
-
-        $operator = str_replace('?', '??', $where['operator']);
-
-        return '('.$this->wrap($where['column']).' '.$operator.' '.$value.') != 0';
+        return $this->wrap($where['column']).' '.$where['operator'].' '.$value;
     }
 
     /**
@@ -482,7 +457,7 @@ class Grammar extends BaseGrammar
     }
 
     /**
-     * Compile a where clause comparing two columns.
+     * Compile a where clause comparing two columns..
      *
      * @param  \Illuminate\Database\Query\Builder  $query
      * @param  array  $where
@@ -594,8 +569,7 @@ class Grammar extends BaseGrammar
         $not = $where['not'] ? 'not ' : '';
 
         return $not.$this->compileJsonContains(
-            $where['column'],
-            $this->parameter($where['value'])
+            $where['column'], $this->parameter($where['value'])
         );
     }
 
@@ -634,9 +608,7 @@ class Grammar extends BaseGrammar
     protected function whereJsonLength(Builder $query, $where)
     {
         return $this->compileJsonLength(
-            $where['column'],
-            $where['operator'],
-            $this->parameter($where['value'])
+            $where['column'], $where['operator'], $this->parameter($where['value'])
         );
     }
 
@@ -653,18 +625,6 @@ class Grammar extends BaseGrammar
     protected function compileJsonLength($column, $operator, $value)
     {
         throw new RuntimeException('This database engine does not support JSON length operations.');
-    }
-
-    /**
-     * Compile a "where fulltext" clause.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $where
-     * @return string
-     */
-    public function whereFullText(Builder $query, $where)
-    {
-        throw new RuntimeException('This database engine does not support fulltext search operations.');
     }
 
     /**
@@ -708,8 +668,6 @@ class Grammar extends BaseGrammar
             return $having['boolean'].' '.$having['sql'];
         } elseif ($having['type'] === 'between') {
             return $this->compileHavingBetween($having);
-        } elseif ($having['type'] === 'bit') {
-            return $this->compileHavingBit($having);
         }
 
         return $this->compileBasicHaving($having);
@@ -747,21 +705,6 @@ class Grammar extends BaseGrammar
         $max = $this->parameter(last($having['values']));
 
         return $having['boolean'].' '.$column.' '.$between.' '.$min.' and '.$max;
-    }
-
-    /**
-     * Compile a having clause involving a bit operator.
-     *
-     * @param  array  $having
-     * @return string
-     */
-    protected function compileHavingBit($having)
-    {
-        $column = $this->wrap($having['column']);
-
-        $parameter = $this->parameter($having['value']);
-
-        return $having['boolean'].' ('.$column.' '.$having['operator'].' '.$parameter.') != 0';
     }
 
     /**
@@ -1051,22 +994,6 @@ class Grammar extends BaseGrammar
     }
 
     /**
-     * Compile an "upsert" statement into SQL.
-     *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @param  array  $values
-     * @param  array  $uniqueBy
-     * @param  array  $update
-     * @return string
-     *
-     * @throws \RuntimeException
-     */
-    public function compileUpsert(Builder $query, array $values, array $uniqueBy, array $update)
-    {
-        throw new RuntimeException('This database engine does not support upserts.');
-    }
-
-    /**
      * Prepare the bindings for an update statement.
      *
      * @param  array  $bindings
@@ -1338,15 +1265,5 @@ class Grammar extends BaseGrammar
     public function getOperators()
     {
         return $this->operators;
-    }
-
-    /**
-     * Get the grammar specific bit operators.
-     *
-     * @return array
-     */
-    public function getBitOperators()
-    {
-        return $this->bitOperators;
     }
 }
