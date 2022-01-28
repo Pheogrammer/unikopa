@@ -43,6 +43,10 @@ class HomeController extends Controller
         {
 
         }
+        if(auth()->user()->type == 0)
+        {
+            return redirect()->route('loan_applicant');
+        }
         return view('home');
     }
     public function apply_for_loan()
@@ -88,7 +92,7 @@ class HomeController extends Controller
 
         if(count($data)>0)
         {
-            return view('loan_applicant',['data'=>$data1]);
+            return view('loan_applicant',['data'=>$data]);
         }
 
     }

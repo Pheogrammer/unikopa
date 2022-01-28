@@ -69,8 +69,8 @@
                                 
                                 <div class="form-group">
                                     <label for="my-input">HESLB benefiaciary?</label>
-                                    Yes <input id="my-input" checked type="radio" name="heslb">
-                                    No <input id="my-input"  type="radio" name="heslb">
+                                    Yes <input id="my-input" value="yes" checked type="radio" name="heslb">
+                                    No <input id="my-input" value="no" type="radio" name="heslb">
                                 </div>
                             </div>
                         </div> <br>

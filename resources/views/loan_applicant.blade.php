@@ -7,7 +7,7 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header text-center">{{ __('Apply for Loan') }} ( {{$_GET['type']}} ) </div>
+                <div class="card-header text-center">Loan Application History </div>
 
                 <div class="card-body">
                     @if ($errors->any())
@@ -27,70 +27,46 @@
                         </div>
                     @endif
 
-                    <form action="{{route('send_loan_application')}}" method="post" enctype="multipart/form-data"
-                     onsubmit="return confirm('You are about to send a loan application, proceed?')">
-                     @csrf
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="my-input">Loan Type</label>
-                                    <input id="my-input" class="form-control" type="text" required value="{{$_GET['type']}}" disabled name="loan">
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="my-input">College</label>
-                                    <input id="my-input" class="form-control" type="text" required name="college">
-                                </div>
-                            </div>
-                        </div> <br>
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="my-input">Year of Study</label>
-                                    <input id="my-input" class="form-control" type="text" required name="year">
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="my-input">Course</label>
-                                    <input id="my-input" class="form-control" required type="text" name="course">
-                                </div>
-                            </div>
-                        </div> <br>
-                        <div class="row">
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="my-input">Student Registration Number</label>
-                                    <input id="my-input" class="form-control" required type="text" name="reg#">
-                                </div>
-                            </div>
-                            <div class="col">
-                                
-                                <div class="form-group">
-                                    <label for="my-input">HESLB benefiaciary?</label>
-                                    Yes <input id="my-input" checked type="radio" name="heslb">
-                                    No <input id="my-input"  type="radio" name="heslb">
+                    @foreach ($data as $item)
+                        <div class="card">
+
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-2" >
+                                        @if ($item->loan_type == 'pesa')
+                                            <img src="{{asset('pesaUnikopa.png')}}" width="30%" alt="" style="border: #000 1px solid; border-radius:100%;" srcset="">
+                                        @elseif($item->loan_type == 'laptop')
+                                            <img src="{{asset('laptopUnikopa.png')}}" width="30%" alt="" style="border: #000 1px solid; border-radius:100%;"  srcset="">
+                                        @else
+                                            <img src="{{asset('unikopaSimu.png')}}" width="30%" alt="" style="border: #000 1px solid; border-radius:100%;"  srcset="">
+                                        @endif
+                                    </div>
+                                    <div class="col">
+                                        <h4>Applied for {{$item->loan_type}} Loan</h4>
+                                    </div>
+                                    <div class="col-md-4 text-right">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        Application Date : {{ date('d F Y', strtotime($item->created_at)) }}
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col">
+                                                        Status : 
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 text-right">
+                                        <a href=""class=" btn btn-primary"> <i class="fa fa-eye" aria-hidden="true"></i> View</a>
+                                    </div>
                                 </div>
                             </div>
                         </div> <br>
-                        <div class="row">
-                            <div class="col-md-5">
-                                <div class="form-group">
-                                    <label for="my-input">Phone Number</label>
-                                    <input id="my-input" class="form-control" required type="number" min="0000000000" max="9999999999" name="phone">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-1">
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </div>
-                            <div class="col-md-1">
-                                <button type="reset" class="btn btn-danger">Cancel</button>
-                            </div>
-                        </div>
-                    </form>
+                    @endforeach
                 </div>
             </div>
         </div>
