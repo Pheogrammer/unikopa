@@ -1,5 +1,7 @@
 @extends('layouts.app')
-
+@section('title')
+Loan applicants
+@endSection
 @section('content')
 @php
     use App\User;
@@ -28,15 +30,16 @@
                         </div>
                     @endif
 
-                   <table class="table table-light table-striped">
+                   <table class="table table-light table-striped" id="myTable">
                        <thead class="thead-light">
                            <tr>
                                <th>#</th>
                                <th>Date</th>
-                               <th>Applicant Email</th>
-                               <th>Application Type</th>
+                               <th>Email</th>
+                               <th>Type</th>
                                <th>HESLB?</th>
                                <th>College</th>
+                               <th>Status</th>
                                <th>Action</th>
                            </tr>
                        </thead>
@@ -55,6 +58,15 @@
                                 <td style="text-transform: capitalize;">{{$item->loan_type}} Loan</td>
                                 <td style="text-transform: uppercase;">{{$item->heslb}}</td>
                                 <td style="text-transform: capitalize">{{$item->college}}</td>
+                                <td>
+                                    @if ($item->status =='1')
+                                                            <span class="badge badge-success">Pending</span>
+                                                        @elseif($item->status =='2')
+                                                        <span class="badge badge-info">Processed</span>
+                                                        @elseif($item->status =='0')
+                                                        <span class="badge badge-danger">Rejected</span>
+                                                        @endif
+                                </td>
                                 <td>
                                     <a href="{{route('view_loan',[$item->id])}}"class=" btn btn-primary"> <i class="fa fa-eye" aria-hidden="true"></i></a>
                                 </td>

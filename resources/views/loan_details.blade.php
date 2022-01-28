@@ -63,8 +63,30 @@
                     </table>
                     <div class="row">
                         <div class="col">
-                            <a class="btn btn-primary" href="{{route('loan_applicant')}}">Ok</a>
+                            <a class="btn btn-primary" href="
+                            @if(auth()->user()->user_type == 0)
+                            {{route('loan_applicant')}}
+                            @else
+                            {{ url('/home') }}
+                            @endif
+                            ">Ok</a>
                         </div>
+                        @if((auth()->user()->user_type == 1)&&($data->status == 1))
+                        <div class="col-md-2">
+                            <form onsubmit="return confirm('You are about to Accept this loan application, proceed?')" method="POST" action="{{route('accept_request')}}" enctype="multipart/form-data">
+                                @csrf
+                                <input type="text" value="{{$data->id}}" name="data" hidden>
+                                <button type="submit" class="btn btn-primary">Accept</button>
+                            </form>
+                        </div>
+                        <div class="col">                            
+                            <form method="POST" onsubmit="return confirm('You are about to reject this request, proceed?')" action="{{route('reject_request')}}" enctype="multipart/form-data">
+                                @csrf
+                                <input type="text" value="{{$data->id}}" name="data" hidden>
+                                <button type="submit"  class="btn btn-danger">Reject</button>
+                            </form>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>

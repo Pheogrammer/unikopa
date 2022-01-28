@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\loanapplication;
 use App\User;
+
+use Illuminate\Support\Facades\Mail;
+use Symfony\Component\HttpFoundation\File\File;
+use phpDocumentor\Reflection\Types\Null_;
 class HomeController extends Controller
 {
     /**
@@ -49,7 +53,7 @@ class HomeController extends Controller
         {
             return redirect()->route('loan_applicant');
         }
-        $data_adm = loanapplication::where('status','<>',0)->get();
+        $data_adm = loanapplication::orderBy('id','desc')->get();
         return view('home',['data'=>$data_adm]);
     }
     public function apply_for_loan()
@@ -85,6 +89,29 @@ class HomeController extends Controller
         $process->status = 1;
         $process->save();
 
+        // mail start
+
+    //     $toEmail = auth()->user()->email;
+    //     $sender = 'uniKopa';
+    //     $userName = 'Notifications';
+
+    //     $data = array('name'=>auth()->user()->name, "body" => "Your loan application via UniKopa has been received, you will receive updates about the processing. ",
+
+    //  "footer"=>"",
+    //  "footer1"=>" The request is under investigation. " ,
+    //  "footer3"=>" UniKopa Team ",
+    //  "footer2"=>""
+    //             );
+
+    //    Mail::send('email', $data, function($message) use ($toEmail,$sender,$userName) {
+
+    //    $message->to($toEmail,$userName)
+    //         ->subject('Unikopa Loan Update.');
+    //    $message->from('pheogrammer@gmail.com',$sender);
+    //    });
+
+        // mail end
+
         return redirect()->route('loan_applicant')->with(['message'=>'Your Loan was sent successfully, you will receive instructions through your email']);
     }
 
@@ -110,5 +137,33 @@ class HomeController extends Controller
             $data2 = User::where('id',$data1['applicant_id'])->first();
             return view('loan_details',['data'=>$data1,'data2'=>$data2]);
         }
+    }
+
+    public function accept_request(Request $request)
+    {
+        $data = loanapplication::where('id',$request['data'])->get();
+        $data1 = loanapplication::where('id',$request['data'])->first();
+
+        if(count($data)>0)
+        {
+            $data1->status = 2;
+            $data1->save();
+            return redirect()->back()->with(['message'=>'Application Approved Successfully!']);
+        }
+ return redirect()->back();
+    }
+
+    public function reject_request(Request $request)
+    {
+        $data = loanapplication::where('id',$request['data'])->get();
+        $data1 = loanapplication::where('id',$request['data'])->first();
+
+        if(count($data)>0)
+        {
+            $data1->status = 0;
+            $data1->save();
+            return redirect()->back()->with(['message'=>'Application Rejected Successfully!']);
+        }
+ return redirect()->back();
     }
 }
