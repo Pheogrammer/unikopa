@@ -24,3 +24,4 @@ Route::get('apply_for_loan','HomeController@apply_for_loan')->name('apply_for_lo
 
 Route::POST('send_loan_application','HomeController@send_loan_application')->name('send_loan_application')->middleware('auth');
 Route::get('loan_applicant','HomeController@loan_applicant')->name('loan_applicant')->middleware('auth');
+Route::get('view_loan/{id}','HomeController@view_loan')->name('view_loan')->middleware('auth');

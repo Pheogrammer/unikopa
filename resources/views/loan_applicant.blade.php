@@ -55,13 +55,19 @@
                                                 <div class="row">
                                                     <div class="col">
                                                         Status : 
+                                                        @if ($item->status =='1')
+                                                            
+                                                        @elseif($item->status =='2')
+                                                         
+                                                            
+                                                        @endif
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-3 text-right">
-                                        <a href=""class=" btn btn-primary"> <i class="fa fa-eye" aria-hidden="true"></i> View</a>
+                                        <a href="{{route('view_loan',[$item->id])}}"class=" btn btn-primary"> <i class="fa fa-eye" aria-hidden="true"></i> View</a>
                                     </div>
                                 </div>
                             </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\loanapplication;
+use App\User;
 class HomeController extends Controller
 {
     /**
@@ -26,6 +27,7 @@ class HomeController extends Controller
         $checker = loanapplication::where('applicant_id',auth()->user()->id)->get();
         $checker1 = loanapplication::where('applicant_id',auth()->user()->id)->orderBy('id','Desc')->first();
 
+        
         if(count($checker)<1){
             
 
@@ -43,11 +45,12 @@ class HomeController extends Controller
         {
 
         }
-        if(auth()->user()->type == 0)
+        if(auth()->user()->user_type == 0)
         {
             return redirect()->route('loan_applicant');
         }
-        return view('home');
+        $data_adm = loanapplication::where('status','<>',0)->get();
+        return view('home',['data'=>$data_adm]);
     }
     public function apply_for_loan()
     {
@@ -95,5 +98,17 @@ class HomeController extends Controller
             return view('loan_applicant',['data'=>$data]);
         }
 
+    }
+    public function view_loan($id)
+    {
+        $data = loanapplication::where('id',$id)->get();
+        $data1 = loanapplication::where('id',$id)->first();
+        
+
+        if(count($data)>0)
+        {
+            $data2 = User::where('id',$data1['applicant_id'])->first();
+            return view('loan_details',['data'=>$data1,'data2'=>$data2]);
+        }
     }
 }
