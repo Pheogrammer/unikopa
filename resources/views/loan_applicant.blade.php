@@ -34,7 +34,7 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label for="my-input">Loan Type</label>
-                                    <input id="my-input" class="form-control" type="text" required value="{{$_GET['type']}}"  name="loan">
+                                    <input id="my-input" class="form-control" type="text" required value="{{$_GET['type']}}" disabled name="loan">
                                 </div>
                             </div>
                             <div class="col">

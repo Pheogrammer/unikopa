@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Facades\Auth;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,3 +20,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('apply_for_loan','HomeController@apply_for_loan')->name('apply_for_loan')->middleware('auth');
+
+Route::POST('send_loan_application','HomeController@send_loan_application')->name('send_loan_application')->middleware('auth');
+Route::get('loan_applicant','HomeController@loan_applicant')->name('loan_applicant')->middleware('auth');
